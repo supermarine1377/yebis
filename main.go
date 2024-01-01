@@ -14,7 +14,7 @@ func init() {
 	slog.SetDefault(slog.New(slog.NewTextHandler(os.Stdout, nil)))
 }
 
-const panicMessage = "An unexpected issue has occurred."
+const panicMessage = "An unexpected error has occurred."
 
 func main() {
 	slog.Info("start to calculate Investment Score...")
