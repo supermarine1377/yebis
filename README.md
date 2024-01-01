@@ -10,3 +10,17 @@ If the score is -8, it *might* tell us that economic conditions are not suitable
 
 The Investment Score is calculated from several types of economic metrics, such as FEDFUNDS RATE, US10Y, and so on.
 
+# HOW TO USE
+
+Create .env file at the root directory in your local environment.
+
+The file content should be like:
+
+```
+FED_API_KEY=fred_api_key
+```
+
+You can register your FED API Key here:
+
+https://fred.stlouisfed.org/docs/api/api_key.html
+
