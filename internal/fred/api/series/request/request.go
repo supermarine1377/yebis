@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"net/url"
 	"supermarine1377/yebis/internal/fred/api/common"
+
+	"golang.org/x/exp/slog"
 )
 
 const baseURL = "https://api.stlouisfed.org/fred/series/observations"
@@ -22,26 +24,35 @@ func (r *Request) HTTPRequest() *http.Request {
 }
 
 // RequestInfo represents an optinal data to get economic values.
-type RequestInfo struct {
-	SeriesID      string
-	RealtimeStart string
-	RealtimeEnd   string
+type Option struct {
+	SeriesID       string
+	ObservationEnd string
+	Frequency      string
 }
 
 // NewRequest generates Request from RequestInfo.
-func NewRequest(ctx context.Context, ri RequestInfo, conf common.Config) (*Request, error) {
+func NewRequest(ctx context.Context, o *Option, conf common.Config) (*Request, error) {
 	apiURL, err := url.Parse(baseURL)
 	if err != nil {
 		return nil, fmt.Errorf("failed to url.Parse: %w", err)
 	}
 
 	v := url.Values{}
-	v.Set("series_id", ri.SeriesID)
-	v.Set("realtime_start", ri.RealtimeStart)
-	v.Set("realtime_end", ri.RealtimeEnd)
+	v.Set("series_id", o.SeriesID)
+	v.Set("observation_end", o.ObservationEnd)
+	v.Set("limit", "1")
+	v.Set("order_by", "observation_date")
+	v.Set("sort_order", "desc")
+	v.Set("frequency", o.Frequency)
+
 	common.SetConfig(&v, conf)
 
 	apiURL.RawQuery = v.Encode()
+
+	slog.Info(
+		"HTTP request to FEDFUNDS",
+		slog.String("URL", apiURL.String()),
+	)
 
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, apiURL.String(), nil)
 	if err != nil {
