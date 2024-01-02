@@ -31,31 +31,15 @@ func (dc *DiffCalculator) US10Y(ctx context.Context) (float64, error) {
 // For example, on New Year's Day, T10YFF recorded by FEDFUNDS becomes somewhat discontinuous..
 // So here we calculate T10YFF using US10Y and FEDFUNDS RATE
 func (dc *DiffCalculator) T10YFF(ctx context.Context) (float64, error) {
-	us10y, err := series.Get(
+	t10yff, err := dc.do(
 		ctx,
-		series_id.US10Y,
-		series.DateToday(),
+		series_id.T10YFF,
 		frequency.Monthly,
-		dc.config,
 	)
 	if err != nil {
-		return 0, fmt.Errorf("failed to get US10Y of today: %w", err)
+		return 0, err
 	}
-	fedfunds, err := series.Get(
-		ctx,
-		series_id.FEDFUNDS,
-		series.DateToday(),
-		frequency.Monthly,
-		dc.config,
-	)
-	if err != nil {
-		return 0, fmt.Errorf("failed to get US02Y of today: %w", err)
-	}
-	diff, err := diff(us10y, fedfunds)
-	if err != nil {
-		return 0, fmt.Errorf("failed to caliculate T10YFF of today: %w", err)
-	}
-	return diff, nil
+	return t10yff, nil
 }
 
 func (dc *DiffCalculator) BAA10Y(ctx context.Context) (float64, error) {

@@ -13,25 +13,36 @@ func TestCalculator_Do(t *testing.T) {
 	tests := []struct {
 		name                          string
 		want                          int
-		prepareMockMockdiffCalculator func(ctx context.Context, m *mock_investment_score.MockdiffCalculator)
+		prepareMockMockdiffCalculator func(ctx context.Context, m *mock_investment_score.MockpartCalculator)
 		wantErr                       bool
 	}{
 		{
 			name: "1st",
 			want: 2,
-			prepareMockMockdiffCalculator: func(ctx context.Context, m *mock_investment_score.MockdiffCalculator) {
-				m.EXPECT().FEDFUNDS(ctx).Return(float64(2), nil)
+			prepareMockMockdiffCalculator: func(ctx context.Context, m *mock_investment_score.MockpartCalculator) {
+				m.EXPECT().FEDFUNDS(ctx).Return(float64(0.13), nil)
 				m.EXPECT().T10YFF(ctx).Return(float64(1.93), nil)
 				m.EXPECT().US10Y(ctx).Return(float64(0.5), nil)
 				m.EXPECT().BAA10Y(ctx).Return(float64(0.04), nil)
-				m.EXPECT().USDINDEX(ctx).Return(float64(-1), nil)
+				m.EXPECT().USDINDEX(ctx).Return(float64(1), nil)
+			},
+		},
+		{
+			name: "2nd",
+			want: -6,
+			prepareMockMockdiffCalculator: func(ctx context.Context, m *mock_investment_score.MockpartCalculator) {
+				m.EXPECT().FEDFUNDS(ctx).Return(float64(0.3), nil)
+				m.EXPECT().T10YFF(ctx).Return(float64(-1), nil)
+				m.EXPECT().US10Y(ctx).Return(float64(-1), nil)
+				m.EXPECT().BAA10Y(ctx).Return(float64(-1), nil)
+				m.EXPECT().USDINDEX(ctx).Return(float64(1), nil)
 			},
 		},
 	}
 	for _, tt := range tests {
 		ctrl := gomock.NewController(t)
 		t.Run(tt.name, func(t *testing.T) {
-			m := mock_investment_score.NewMockdiffCalculator(ctrl)
+			m := mock_investment_score.NewMockpartCalculator(ctrl)
 
 			c := investment_score.NewCalculator(m)
 			ctx := context.Background()

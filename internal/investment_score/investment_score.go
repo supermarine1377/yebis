@@ -11,11 +11,11 @@ import (
 )
 
 type Calculator struct {
-	dc diffCalculator
+	pc partCalculator
 }
 
 // diffCalculator calculates a diffence of each ecnomic data between that of today and that of a year ago
-type diffCalculator interface {
+type partCalculator interface {
 	FEDFUNDS(ctx context.Context) (float64, error)
 	US10Y(ctx context.Context) (float64, error)
 	T10YFF(ctx context.Context) (float64, error)
@@ -23,9 +23,9 @@ type diffCalculator interface {
 	USDINDEX(ctx context.Context) (float64, error)
 }
 
-func NewCalculator(dc diffCalculator) *Calculator {
+func NewCalculator(pc partCalculator) *Calculator {
 	return &Calculator{
-		dc: dc,
+		pc: pc,
 	}
 }
 
@@ -33,7 +33,7 @@ func (c *Calculator) Do(ctx context.Context) (int, error) {
 	var score int
 
 	slog.InfoContext(ctx, "calculating a part of FEDFUNDS...")
-	fedfundsDiff, err := c.dc.FEDFUNDS(ctx)
+	fedfundsDiff, err := c.pc.FEDFUNDS(ctx)
 	if err != nil {
 		return 0, fmt.Errorf("failed to calculate a part of FEDFUNDS: %w", err)
 	}
@@ -48,21 +48,21 @@ func (c *Calculator) Do(ctx context.Context) (int, error) {
 	slog.Info("completed 1/5 part of calculateing investment score", slog.Int("score at this point", score))
 
 	slog.InfoContext(ctx, "calculating a part of T10YFF...")
-	t10yffDiff, err := c.dc.T10YFF(ctx)
+	t10yff, err := c.pc.T10YFF(ctx)
 	if err != nil {
 		return 0, fmt.Errorf("failed to calculate a part of T10YFF: %w", err)
 	}
-	slog.InfoContext(ctx, "successfully calculated a part of T10YFF", slog.Float64("value", t10yffDiff))
-	if t10yffDiff == 1 || t10yffDiff > 1 {
+	slog.InfoContext(ctx, "successfully calculated a part of T10YFF", slog.Float64("value", t10yff))
+	if t10yff >= 1 {
 		score = score + 2
-	} else if t10yffDiff < 0 {
+	} else if t10yff < 0 {
 		score = score - 2
 	}
 
 	slog.Info("completed 2/5 part of calculateing investment score", slog.Int("score at this point", score))
 
 	slog.InfoContext(ctx, "calculating a part of US10Y...")
-	us10yDiff, err := c.dc.US10Y(ctx)
+	us10yDiff, err := c.pc.US10Y(ctx)
 	if err != nil {
 		return 0, fmt.Errorf("failed to calculate a part of US10Y: %w", err)
 	}
@@ -76,7 +76,7 @@ func (c *Calculator) Do(ctx context.Context) (int, error) {
 	slog.Info("completed 3/5 part of calculateing investment score", slog.Int("score at this point", score))
 
 	slog.InfoContext(ctx, "calculating a part of BAA10Y...")
-	baa10yDiff, err := c.dc.BAA10Y(ctx)
+	baa10yDiff, err := c.pc.BAA10Y(ctx)
 	if err != nil {
 		return 0, fmt.Errorf("failed to calculate a part of BAA10Y: %w", err)
 	}
@@ -90,12 +90,12 @@ func (c *Calculator) Do(ctx context.Context) (int, error) {
 	slog.Info("completed 4/5 part of calculateing investment score", slog.Int("score at this point", score))
 
 	slog.InfoContext(ctx, "calculating a part of USDINDEX...")
-	usdDiff, err := c.dc.USDINDEX(ctx)
+	usdDiff, err := c.pc.USDINDEX(ctx)
 	if err != nil {
 		return 0, fmt.Errorf("failed to calculate a part of USDINDEX: %w", err)
 	}
 	slog.InfoContext(ctx, "successfully calculated a part of USDINDEX", slog.Float64("value", usdDiff))
-	if usdDiff > 1 {
+	if usdDiff > 0 {
 		score = score - 2
 	} else {
 		score = score + 2
