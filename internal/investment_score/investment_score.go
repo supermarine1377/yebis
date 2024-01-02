@@ -101,7 +101,7 @@ func (c *Calculator) Do(ctx context.Context) (int, error) {
 		score = score + 2
 	}
 
-	slog.Info("completed /5 part of calculateing investment score", slog.Int("score at this point", score))
+	slog.Info("completed 5/5 part of calculateing investment score", slog.Int("score at this point", score))
 
 	return score, nil
 }
