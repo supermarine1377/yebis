@@ -42,13 +42,12 @@ var ErrFREDAPIBadRequest = errors.New("FRED API returned Bad Request Error")
 
 // Get economic data via FRED API.
 // The API reference: https://fred.stlouisfed.org/docs/api/fred/series.html
-func Get(ctx context.Context, seriesID, ObservationEnd string, freq string, config common.Config) (*Res, error) {
+func Get(ctx context.Context, seriesID, ObservationEnd string, config common.Config) (*Res, error) {
 	req, err := request.NewRequest(
 		ctx,
 		&request.Option{
 			SeriesID:       seriesID,
 			ObservationEnd: ObservationEnd,
-			Frequency:      freq,
 		},
 		config,
 	)

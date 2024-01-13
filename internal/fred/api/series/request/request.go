@@ -27,7 +27,6 @@ func (r *Request) HTTPRequest() *http.Request {
 type Option struct {
 	SeriesID       string
 	ObservationEnd string
-	Frequency      string
 }
 
 // NewRequest generates Request from RequestInfo.
@@ -43,7 +42,6 @@ func NewRequest(ctx context.Context, o *Option, conf common.Config) (*Request, e
 	v.Set("limit", "1")
 	v.Set("order_by", "observation_date")
 	v.Set("sort_order", "desc")
-	v.Set("frequency", o.Frequency)
 
 	common.SetConfig(&v, conf)
 

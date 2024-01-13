@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"supermarine1377/yebis/internal/fred/api/common"
 	"supermarine1377/yebis/internal/fred/api/series"
-	"supermarine1377/yebis/internal/fred/api/series/frequency"
 	"supermarine1377/yebis/internal/fred/api/series/series_id"
 )
 
@@ -20,22 +19,18 @@ func NewDiffCalculator(config common.Config) *DiffCalculator {
 }
 
 func (dc *DiffCalculator) FEDFUNDS(ctx context.Context) (float64, error) {
-	return dc.do(ctx, series_id.FEDFUNDS, frequency.Monthly)
+	return dc.do(ctx, series_id.FEDFUNDS)
 }
 
 func (dc *DiffCalculator) US10Y(ctx context.Context) (float64, error) {
-	return dc.do(ctx, series_id.US10Y, frequency.Monthly)
+	return dc.do(ctx, series_id.US10Y)
 }
 
 // At the edge, T10YFF becomes a discontinuous function.
 // For example, on New Year's Day, T10YFF recorded by FEDFUNDS becomes somewhat discontinuous..
 // So here we calculate T10YFF using US10Y and FEDFUNDS RATE
 func (dc *DiffCalculator) T10YFF(ctx context.Context) (float64, error) {
-	t10yff, err := dc.do(
-		ctx,
-		series_id.T10YFF,
-		frequency.Monthly,
-	)
+	t10yff, err := dc.do(ctx, series_id.T10YFF)
 	if err != nil {
 		return 0, err
 	}
@@ -43,19 +38,18 @@ func (dc *DiffCalculator) T10YFF(ctx context.Context) (float64, error) {
 }
 
 func (dc *DiffCalculator) BAA10Y(ctx context.Context) (float64, error) {
-	return dc.do(ctx, series_id.BAA10Y, frequency.Monthly)
+	return dc.do(ctx, series_id.BAA10Y)
 }
 
 func (dc *DiffCalculator) USDINDEX(ctx context.Context) (float64, error) {
-	return dc.do(ctx, series_id.USDINDEX, frequency.Weekly)
+	return dc.do(ctx, series_id.USDINDEX)
 }
 
-func (dc *DiffCalculator) do(ctx context.Context, dataName string, freq string) (float64, error) {
+func (dc *DiffCalculator) do(ctx context.Context, dataName string) (float64, error) {
 	today, err := series.Get(
 		ctx,
 		dataName,
 		series.DateToday(),
-		freq,
 		dc.config,
 	)
 	if err != nil {
@@ -66,7 +60,6 @@ func (dc *DiffCalculator) do(ctx context.Context, dataName string, freq string) 
 		ctx,
 		dataName,
 		series.DateYearAgo(),
-		freq,
 		dc.config,
 	)
 	if err != nil {

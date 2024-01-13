@@ -12,7 +12,9 @@ import (
 )
 
 func init() {
-	slog.SetDefault(slog.New(slog.NewTextHandler(os.Stdout, nil)))
+	slog.SetDefault(
+		slog.New(slog.NewTextHandler(os.Stdout, nil)),
+	)
 }
 
 const panicMessage = "An unexpected error has occurred."
