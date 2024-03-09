@@ -6,6 +6,7 @@ import (
 	"os"
 	"supermarine1377/yebis/internal/investment_score"
 	"supermarine1377/yebis/internal/investment_score/economic_data"
+	"supermarine1377/yebis/internal/investment_score/economic_data/record"
 	"supermarine1377/yebis/internal/pkg/config"
 
 	"golang.org/x/exp/slog"
@@ -50,4 +51,13 @@ func main() {
 		"investment score successfully calculated",
 	)
 	fmt.Printf("score: %d\n", score)
+
+	if err := record.Write(score); err != nil {
+		slog.ErrorContext(
+			ctx,
+			"Failed to record the calculated investment score",
+			err,
+		)
+		panic(err)
+	}
 }
