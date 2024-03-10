@@ -13,6 +13,7 @@ const FILE_NAME = "investment_score_record.csv"
 
 const TIME_FORMAT = "2006-01-02"
 
+// TODO: Implement io.Writer if this fucntion must be named as Write
 func Write(score int) error {
 	now := time.Now()
 

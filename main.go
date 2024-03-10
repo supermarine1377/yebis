@@ -6,7 +6,7 @@ import (
 	"os"
 	"supermarine1377/yebis/internal/investment_score"
 	"supermarine1377/yebis/internal/investment_score/economic_data"
-	"supermarine1377/yebis/internal/investment_score/economic_data/record"
+	"supermarine1377/yebis/internal/investment_score/record"
 	"supermarine1377/yebis/internal/pkg/config"
 
 	"golang.org/x/exp/slog"
