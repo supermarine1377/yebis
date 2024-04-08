@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"strconv"
 	"supermarine1377/yebis/internal/fred/api/common"
 	"supermarine1377/yebis/internal/fred/api/series"
+	"supermarine1377/yebis/internal/fred/api/series/response"
 	"supermarine1377/yebis/internal/fred/api/series/series_id"
 )
 
@@ -76,17 +76,17 @@ var errNumberOfObservationsMustBeOne = errors.New("number of observations must o
 
 // If data of today or that of one year ago contains more than one Observersion, this function threw error.
 // Then substract return a defference between obeservation value of res1 and that of res2.
-func diff(res1 *series.Res, res2 *series.Res) (float64, error) {
+func diff(res1 *response.Res, res2 *response.Res) (float64, error) {
 	if len(res1.Observations) != 1 || len(res2.Observations) != 1 {
 		return 0, errNumberOfObservationsMustBeOne
 	}
-	val1, err := strconv.ParseFloat(res1.Observations[0].Value, 32)
+	val1, err := res1.LatestValueFloat()
 	if err != nil {
-		return 0, fmt.Errorf("failed to strconv.ParseFloat: %w", err)
+		return 0, err
 	}
-	val2, err := strconv.ParseFloat(res2.Observations[0].Value, 32)
+	val2, err := res2.LatestValueFloat()
 	if err != nil {
-		return 0, fmt.Errorf("failed to strconv.ParseFloat: %w", err)
+		return 0, err
 	}
 	return val1 - val2, nil
 }

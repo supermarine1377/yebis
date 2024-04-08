@@ -11,28 +11,8 @@ import (
 	"supermarine1377/yebis/internal/fred/api/common"
 	common_error "supermarine1377/yebis/internal/fred/api/common/error"
 	"supermarine1377/yebis/internal/fred/api/series/request"
+	"supermarine1377/yebis/internal/fred/api/series/response"
 )
-
-// Res represents HTTP response from FRED API.
-type Res struct {
-	Units        string        `json:"units,omitempty"`
-	OutputType   int           `json:"output_type,omitempty"`
-	FileType     string        `json:"file_type,omitempty"`
-	OrderBy      string        `json:"order_by,omitempty"`
-	SortBy       string        `json:"sort_by,omitempty"`
-	Count        int           `json:"count,omitempty"`
-	Offset       int           `json:"offset,omitempty"`
-	Limit        int           `json:"limit,omitempty"`
-	Observations []Observation `json:"observations,omitempty"`
-}
-
-// Observation represents data which is contained in HTTP response from FRED API.
-type Observation struct {
-	RealtimeStart string `json:"realtime_start"`
-	RealtimeEnd   string `json:"realtime"`
-	Date          string `json:"date"`
-	Value         string `json:"value"`
-}
 
 // ErrFREDAPIInternalServer is an error that says FRED API returned Internal Server Error (500).
 var ErrFREDAPIInternalServer = errors.New("FRED API returned Internal Server Error")
@@ -42,7 +22,7 @@ var ErrFREDAPIBadRequest = errors.New("FRED API returned Bad Request Error")
 
 // Get economic data via FRED API.
 // The API reference: https://fred.stlouisfed.org/docs/api/fred/series.html
-func Get(ctx context.Context, seriesID, ObservationEnd string, config common.Config) (*Res, error) {
+func Get(ctx context.Context, seriesID, ObservationEnd string, config common.Config) (*response.Res, error) {
 	req, err := request.NewRequest(
 		ctx,
 		&request.Option{
@@ -76,7 +56,7 @@ func Get(ctx context.Context, seriesID, ObservationEnd string, config common.Con
 	if err != nil {
 		return nil, fmt.Errorf("failed to io.ReadAll: %w", err)
 	}
-	var Res Res
+	var Res response.Res
 	if err := json.Unmarshal(b, &Res); err != nil {
 		return nil, fmt.Errorf("fail to json.Unmarshal: %w", err)
 	}
