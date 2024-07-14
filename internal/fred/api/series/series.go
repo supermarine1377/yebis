@@ -12,6 +12,7 @@ import (
 	common_error "supermarine1377/yebis/internal/fred/api/common/error"
 	"supermarine1377/yebis/internal/fred/api/series/request"
 	"supermarine1377/yebis/internal/fred/api/series/response"
+	"time"
 )
 
 // ErrFREDAPIInternalServer is an error that says FRED API returned Internal Server Error (500).
@@ -22,12 +23,32 @@ var ErrFREDAPIBadRequest = errors.New("FRED API returned Bad Request Error")
 
 // Get economic data via FRED API.
 // The API reference: https://fred.stlouisfed.org/docs/api/fred/series.html
-func Get(ctx context.Context, seriesID, ObservationEnd string, config common.Config) (*response.Res, error) {
+func Get(ctx context.Context, seriesID string, obeservationEnd time.Time, config common.Config) (*response.Res, error) {
+	var (
+		res *response.Res
+		err error
+	)
+	for {
+		fmt.Println(obeservationEnd)
+		res, err = get(ctx, seriesID, obeservationEnd, config)
+		if err != nil {
+			return nil, err
+		}
+		if _, err := res.LatestValueFloat(); err != nil {
+			obeservationEnd = obeservationEnd.AddDate(0, 0, -1)
+			continue
+		}
+		break
+	}
+	return res, err
+}
+
+func get(ctx context.Context, seriesID string, obeservationEnd time.Time, config common.Config) (*response.Res, error) {
 	req, err := request.NewRequest(
 		ctx,
 		&request.Option{
 			SeriesID:       seriesID,
-			ObservationEnd: ObservationEnd,
+			ObservationEnd: Date(obeservationEnd),
 		},
 		config,
 	)

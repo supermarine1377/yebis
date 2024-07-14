@@ -11,3 +11,7 @@ func DateToday() string {
 func DateYearAgo() string {
 	return time.Now().AddDate(-1, 0, 0).Format(dateFomrat)
 }
+
+func Date(t time.Time) string {
+	return t.Format(dateFomrat)
+}
