@@ -8,49 +8,57 @@ import (
 	"supermarine1377/yebis/internal/fred/api/series"
 	"supermarine1377/yebis/internal/fred/api/series/response"
 	"supermarine1377/yebis/internal/fred/api/series/series_id"
+	"time"
 )
 
-type DiffCalculator struct {
+type Calculator struct {
 	config common.Config
 }
 
-func NewDiffCalculator(config common.Config) *DiffCalculator {
-	return &DiffCalculator{config: config}
+func NewCalculator(config common.Config) *Calculator {
+	return &Calculator{config: config}
 }
 
-func (dc *DiffCalculator) FEDFUNDS(ctx context.Context) (float64, error) {
-	return dc.do(ctx, series_id.FEDFUNDS)
+func (c *Calculator) FEDFUNDS(ctx context.Context) (float64, error) {
+	return c.diff(ctx, series_id.FEDFUNDS)
 }
 
-func (dc *DiffCalculator) US10Y(ctx context.Context) (float64, error) {
-	return dc.do(ctx, series_id.US10Y)
+func (c *Calculator) US10Y(ctx context.Context) (float64, error) {
+	return c.diff(ctx, series_id.US10Y)
 }
 
-// At the edge, T10YFF becomes a discontinuous function.
-// For example, on New Year's Day, T10YFF recorded by FEDFUNDS becomes somewhat discontinuous..
-// So here we calculate T10YFF using US10Y and FEDFUNDS RATE
-func (dc *DiffCalculator) T10YFF(ctx context.Context) (float64, error) {
-	t10yff, err := dc.do(ctx, series_id.T10YFF)
+func (c *Calculator) T10YFF(ctx context.Context) (float64, error) {
+	res, err := series.Get(
+		ctx,
+		series_id.T10YFF,
+		time.Now(),
+		c.config,
+	)
 	if err != nil {
 		return 0, err
 	}
-	return t10yff, nil
+	val, err := res.LatestValueFloat()
+	if err != nil {
+		return 0, err
+	}
+	return val, nil
 }
 
-func (dc *DiffCalculator) BAA10Y(ctx context.Context) (float64, error) {
-	return dc.do(ctx, series_id.BAA10Y)
+func (c *Calculator) BAA10Y(ctx context.Context) (float64, error) {
+	return c.diff(ctx, series_id.BAA10Y)
 }
 
-func (dc *DiffCalculator) USDINDEX(ctx context.Context) (float64, error) {
-	return dc.do(ctx, series_id.USDINDEX)
+func (c *Calculator) USDINDEX(ctx context.Context) (float64, error) {
+	return c.diff(ctx, series_id.USDINDEX)
 }
 
-func (dc *DiffCalculator) do(ctx context.Context, dataName string) (float64, error) {
+func (c *Calculator) diff(ctx context.Context, dataName string) (float64, error) {
+	now := time.Now()
 	today, err := series.Get(
 		ctx,
 		dataName,
-		series.DateToday(),
-		dc.config,
+		now,
+		c.config,
 	)
 	if err != nil {
 		return 0, fmt.Errorf("failed to get %s of today: %w", dataName, err)
@@ -59,8 +67,8 @@ func (dc *DiffCalculator) do(ctx context.Context, dataName string) (float64, err
 	yearago, err := series.Get(
 		ctx,
 		dataName,
-		series.DateYearAgo(),
-		dc.config,
+		now.AddDate(-1, 0, 0),
+		c.config,
 	)
 	if err != nil {
 		return 0, fmt.Errorf("failed to get %s of a year ago: %w", dataName, err)

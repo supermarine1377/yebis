@@ -34,7 +34,7 @@ func main() {
 		panic(panicMessage)
 	}
 
-	dc := economic_data.NewDiffCalculator(config)
+	dc := economic_data.NewCalculator(config)
 	c := investment_score.NewCalculator(dc)
 	score, err := c.Do(ctx)
 	if err != nil {
