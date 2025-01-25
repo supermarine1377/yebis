@@ -2,7 +2,6 @@ package error
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 )
@@ -16,13 +15,12 @@ type ErrorRes struct {
 func ParseErrorRes(httpRes *http.Response) (*ErrorRes, error) {
 	b, err := io.ReadAll(httpRes.Body)
 	if err != nil {
-		return nil, fmt.Errorf("failed to io.ReadAll: %w", err)
+		return nil, err
 	}
 
 	var Res ErrorRes
 	if err := json.Unmarshal(b, &Res); err != nil {
-		return nil, fmt.Errorf("fail to json.Unmarshal: %w", err)
+		return nil, err
 	}
-
 	return &Res, nil
 }
