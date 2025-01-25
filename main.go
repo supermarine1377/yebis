@@ -24,7 +24,7 @@ func main() {
 	slog.Info("start to calculate Investment Score...")
 
 	ctx := context.Background()
-	config, err := config.NewConfig()
+	config, err := config.New()
 	if err != nil {
 		slog.ErrorContext(
 			ctx,
