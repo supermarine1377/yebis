@@ -1,6 +1,6 @@
 // package investment_score is responsble for calculating investment_score
 //
-//go:generate mockgen -source=$GOFILE -package=$GOPACKAGE -destination=./mock/$GOPACKAGE/$GOFILE
+//go:generate mockgen -source=$GOFILE -package=mock -destination=./mock/$GOFILE
 package investment_score
 
 import (
