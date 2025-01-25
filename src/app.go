@@ -56,7 +56,7 @@ func (a *App) Run() error {
 		slog.ErrorContext(
 			ctx,
 			"Failed to record the calculated investment score",
-			err,
+			slog.Any("error message", err),
 		)
 		return err
 	}
