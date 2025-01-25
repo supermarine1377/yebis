@@ -2,8 +2,8 @@ package investment_score_test
 
 import (
 	"context"
-	"supermarine1377/yebis/internal/investment_score"
-	mock_investment_score "supermarine1377/yebis/internal/investment_score/mock/investment_score"
+	"supermarine1377/yebis/src/investment_score"
+	mock_investment_score "supermarine1377/yebis/src/investment_score/mock/investment_score"
 	"testing"
 
 	"go.uber.org/mock/gomock"

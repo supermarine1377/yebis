@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"supermarine1377/yebis/internal/fred/api/common"
-	"supermarine1377/yebis/internal/fred/api/series"
-	"supermarine1377/yebis/internal/fred/api/series/response"
-	"supermarine1377/yebis/internal/fred/api/series/series_id"
+	"supermarine1377/yebis/src/fred/common"
+	"supermarine1377/yebis/src/fred/series"
+	"supermarine1377/yebis/src/fred/series/response"
+	"supermarine1377/yebis/src/fred/series/series_id"
 	"time"
 )
 
