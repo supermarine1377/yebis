@@ -37,9 +37,9 @@ func Write(score int) error {
 
 	// Add header to new file
 	if newFileCreated {
-		w.Write([]string{"date", "investment score"})
+		_ = w.Write([]string{"date", "investment score"})
 	}
-	w.Write([]string{now.Format(TIME_FORMAT), strconv.Itoa(score)})
+	_ = w.Write([]string{now.Format(TIME_FORMAT), strconv.Itoa(score)})
 	w.Flush()
 
 	if err := w.Error(); err != nil {

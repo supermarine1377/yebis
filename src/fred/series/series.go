@@ -21,16 +21,24 @@ var ErrFREDAPIInternalServer = errors.New("FRED API returned Internal Server Err
 // ErrFREDAPIBadRequest is an error that says FRED API returned Bad Request Error (400).
 var ErrFREDAPIBadRequest = errors.New("FRED API returned Bad Request Error")
 
-// Get economic data via FRED API.
+type Fetcher struct {
+	config common.Config
+}
+
+func NewFetcher(config common.Config) *Fetcher {
+	return &Fetcher{config: config}
+}
+
+// Fetch economic data via FRED API.
 // The API reference: https://fred.stlouisfed.org/docs/api/fred/series.html
-func Get(ctx context.Context, seriesID string, obeservationEnd time.Time, config common.Config) (*response.Res, error) {
+func (f *Fetcher) Fetch(ctx context.Context, seriesID string, obeservationEnd time.Time) (*response.Res, error) {
 	var (
 		res *response.Res
 		err error
 	)
 	for {
 		fmt.Println(obeservationEnd)
-		res, err = get(ctx, seriesID, obeservationEnd, config)
+		res, err = get(ctx, seriesID, obeservationEnd, f.config)
 		if err != nil {
 			return nil, err
 		}
