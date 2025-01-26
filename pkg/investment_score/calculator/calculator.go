@@ -5,8 +5,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"supermarine1377/yebis/src/fred/series/response"
-	"supermarine1377/yebis/src/fred/series/series_id"
+	"supermarine1377/yebis/pkg/fred/series/response"
+	"supermarine1377/yebis/pkg/fred/series/series_id"
 	"time"
 )
 
