@@ -6,8 +6,9 @@ import (
 	"log/slog"
 	"os"
 	"supermarine1377/yebis/src/config"
+	"supermarine1377/yebis/src/fred/series"
 	"supermarine1377/yebis/src/investment_score"
-	"supermarine1377/yebis/src/investment_score/economic_data"
+	"supermarine1377/yebis/src/investment_score/calculator"
 	"supermarine1377/yebis/src/investment_score/record"
 )
 
@@ -34,7 +35,7 @@ func NewApp() (*App, error) {
 
 func (a *App) Run() error {
 	ctx := context.Background()
-	dc := economic_data.NewCalculator(a.config)
+	dc := calculator.New(series.NewFetcher(a.config))
 	c := investment_score.NewCalculator(dc)
 	score, err := c.Do(ctx)
 	if err != nil {
