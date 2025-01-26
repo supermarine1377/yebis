@@ -1,15 +1,15 @@
-package src
+package pkg
 
 import (
 	"context"
 	"fmt"
 	"log/slog"
 	"os"
-	"supermarine1377/yebis/src/config"
-	"supermarine1377/yebis/src/fred/series"
-	"supermarine1377/yebis/src/investment_score"
-	"supermarine1377/yebis/src/investment_score/calculator"
-	"supermarine1377/yebis/src/investment_score/record"
+	"supermarine1377/yebis/pkg/config"
+	"supermarine1377/yebis/pkg/fred/series"
+	"supermarine1377/yebis/pkg/investment_score"
+	"supermarine1377/yebis/pkg/investment_score/calculator"
+	"supermarine1377/yebis/pkg/investment_score/record"
 )
 
 func init() {

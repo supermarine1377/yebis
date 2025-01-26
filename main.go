@@ -1,9 +1,9 @@
 package main
 
-import "supermarine1377/yebis/src"
+import "supermarine1377/yebis/pkg"
 
 func main() {
-	app, err := src.NewApp()
+	app, err := pkg.NewApp()
 	if err != nil {
 		panic(err)
 	}

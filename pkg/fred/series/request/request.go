@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"supermarine1377/yebis/src/fred/common"
+	"supermarine1377/yebis/pkg/fred/common"
 
 	"golang.org/x/exp/slog"
 )

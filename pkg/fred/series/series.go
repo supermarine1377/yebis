@@ -8,10 +8,10 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"supermarine1377/yebis/src/fred/common"
-	common_error "supermarine1377/yebis/src/fred/common/error"
-	"supermarine1377/yebis/src/fred/series/request"
-	"supermarine1377/yebis/src/fred/series/response"
+	"supermarine1377/yebis/pkg/fred/common"
+	common_error "supermarine1377/yebis/pkg/fred/common/error"
+	"supermarine1377/yebis/pkg/fred/series/request"
+	"supermarine1377/yebis/pkg/fred/series/response"
 	"time"
 )
 
