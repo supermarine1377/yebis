@@ -28,7 +28,7 @@ func NewCalculator(iec InvestmentEnvironmentCalculator) *Calculator {
 	}
 }
 
-func (c *Calculator) Do(ctx context.Context) (int, error) {
+func (c *Calculator) Calculate(ctx context.Context) (int, error) {
 	var score int
 
 	slog.InfoContext(ctx, "calculating a part of FEDFUNDS...")
