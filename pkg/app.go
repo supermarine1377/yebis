@@ -33,11 +33,15 @@ func NewApp() (*App, error) {
 	}, nil
 }
 
-func (a *App) Run() error {
-	ctx := context.Background()
+func (a *App) CalculateInvestmentScore(ctx context.Context) (int, error) {
 	dc := calculator.New(series.NewFetcher(a.config))
 	c := investment_score.NewCalculator(dc)
-	score, err := c.Calculate(ctx)
+	return c.Calculate(ctx)
+}
+
+func (a *App) Run() error {
+	ctx := context.Background()
+	score, err := a.CalculateInvestmentScore(ctx)
 	if err != nil {
 		slog.ErrorContext(
 			ctx,
