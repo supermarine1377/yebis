@@ -37,7 +37,7 @@ func (a *App) Run() error {
 	ctx := context.Background()
 	dc := calculator.New(series.NewFetcher(a.config))
 	c := investment_score.NewCalculator(dc)
-	score, err := c.Do(ctx)
+	score, err := c.Calculate(ctx)
 	if err != nil {
 		slog.ErrorContext(
 			ctx,

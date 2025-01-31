@@ -11,7 +11,23 @@ import (
 	"go.uber.org/mock/gomock"
 )
 
+func prepareMockSeriesFetcher(t *testing.T, m *mock.MockSeriesFetcher, ayearago, today string) {
+	t.Helper()
+
+	m.EXPECT().Fetch(gomock.Any(), "FEDFUNDS", gomock.Any()).Return(&response.Res{
+		Observations: []response.Observation{
+			{Value: ayearago},
+		},
+	}, nil).After(
+		m.EXPECT().Fetch(gomock.Any(), "FEDFUNDS", gomock.Any()).Return(&response.Res{
+			Observations: []response.Observation{
+				{Value: today},
+			},
+		}, nil),
+	)
+}
 func TestCalculator_FEDFUNDS(t *testing.T) {
+
 	type args struct {
 		ctx   context.Context
 		score int
@@ -19,7 +35,7 @@ func TestCalculator_FEDFUNDS(t *testing.T) {
 	tests := []struct {
 		args                     args
 		name                     string
-		prepareMockSeriesFetcher func(m *mock.MockSeriesFetcher)
+		prepareMockSeriesFetcher func(t *testing.T, m *mock.MockSeriesFetcher)
 		want                     int
 		wantErr                  bool
 	}{
@@ -29,20 +45,8 @@ func TestCalculator_FEDFUNDS(t *testing.T) {
 				ctx:   context.Background(),
 				score: 0,
 			},
-			prepareMockSeriesFetcher: func(m *mock.MockSeriesFetcher) {
-				// A year ago's FEDFUNDS is 0
-				m.EXPECT().Fetch(gomock.Any(), "FEDFUNDS", gomock.Any()).Return(&response.Res{
-					Observations: []response.Observation{
-						{Value: "0"},
-					},
-				}, nil).After(
-					// Today's FEDFUNDS is 0.5
-					m.EXPECT().Fetch(gomock.Any(), "FEDFUNDS", gomock.Any()).Return(&response.Res{
-						Observations: []response.Observation{
-							{Value: "0.5"},
-						},
-					}, nil),
-				)
+			prepareMockSeriesFetcher: func(t *testing.T, m *mock.MockSeriesFetcher) {
+				prepareMockSeriesFetcher(t, m, "0", "0.5")
 			},
 			want: -2,
 		},
@@ -52,18 +56,8 @@ func TestCalculator_FEDFUNDS(t *testing.T) {
 				ctx:   context.Background(),
 				score: 0,
 			},
-			prepareMockSeriesFetcher: func(m *mock.MockSeriesFetcher) {
-				m.EXPECT().Fetch(gomock.Any(), "FEDFUNDS", gomock.Any()).Return(&response.Res{
-					Observations: []response.Observation{
-						{Value: "0.25"},
-					},
-				}, nil).After(
-					m.EXPECT().Fetch(gomock.Any(), "FEDFUNDS", gomock.Any()).Return(&response.Res{
-						Observations: []response.Observation{
-							{Value: "0"},
-						},
-					}, nil),
-				)
+			prepareMockSeriesFetcher: func(t *testing.T, m *mock.MockSeriesFetcher) {
+				prepareMockSeriesFetcher(t, m, "0.25", "0")
 			},
 			want: 2,
 		},
@@ -73,7 +67,7 @@ func TestCalculator_FEDFUNDS(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			m := mock.NewMockSeriesFetcher(ctrl)
 			c := calculator.New(m)
-			tt.prepareMockSeriesFetcher(m)
+			tt.prepareMockSeriesFetcher(t, m)
 
 			got, err := c.FEDFUNDS(tt.args.ctx, tt.args.score)
 			if tt.wantErr {
