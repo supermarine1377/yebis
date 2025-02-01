@@ -14,15 +14,9 @@ The Investment Score is calculated from several types of economic metrics, such 
 
 ## How to use
 
-Create .env file at the root directory in your local environment.
-
-The file content should be like:
+Set an enviroment variable called "YEBIS_API_KEY" to your FRD API key like this:
 
 ```
-FED_API_KEY=fred_api_key
+export FED_API_KEY="YOUR_API_KEY"
 ```
-
-You can register your FED API Key here:
-
-https://fred.stlouisfed.org/docs/api/api_key.html
 
