@@ -8,9 +8,9 @@ import (
 
 	"github.com/supermarine1377/yebis/pkg/config"
 	"github.com/supermarine1377/yebis/pkg/fred/series"
-	"github.com/supermarine1377/yebis/pkg/investment_score"
-	"github.com/supermarine1377/yebis/pkg/investment_score/calculator"
-	"github.com/supermarine1377/yebis/pkg/investment_score/record"
+	"github.com/supermarine1377/yebis/pkg/investment_environment_score"
+	"github.com/supermarine1377/yebis/pkg/investment_environment_score/calculator"
+	"github.com/supermarine1377/yebis/pkg/investment_environment_score/record"
 )
 
 func init() {
@@ -36,7 +36,7 @@ func NewApp() (*App, error) {
 
 func (a *App) CalculateInvestmentScore(ctx context.Context) (int, error) {
 	dc := calculator.New(series.NewFetcher(a.config))
-	c := investment_score.NewCalculator(dc)
+	c := investment_environment_score.NewCalculator(dc)
 	return c.Calculate(ctx)
 }
 
