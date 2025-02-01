@@ -1,4 +1,4 @@
-module supermarine1377/yebis
+module github.com/supermarine1377/yebis
 
 go 1.23.2
 

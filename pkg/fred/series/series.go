@@ -8,11 +8,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"supermarine1377/yebis/pkg/fred/common"
-	common_error "supermarine1377/yebis/pkg/fred/common/error"
-	"supermarine1377/yebis/pkg/fred/series/request"
-	"supermarine1377/yebis/pkg/fred/series/response"
 	"time"
+
+	"github.com/supermarine1377/yebis/pkg/fred/common"
+	common_error "github.com/supermarine1377/yebis/pkg/fred/common/error"
+	"github.com/supermarine1377/yebis/pkg/fred/series/request"
+	"github.com/supermarine1377/yebis/pkg/fred/series/response"
 )
 
 // ErrFREDAPIInternalServer is an error that says FRED API returned Internal Server Error (500).
