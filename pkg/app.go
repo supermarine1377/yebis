@@ -34,7 +34,7 @@ func NewApp() (*App, error) {
 	}, nil
 }
 
-func (a *App) CalculateInvestmentScore(ctx context.Context) (int, error) {
+func (a *App) CalculateInvestmentEnvironmentScore(ctx context.Context) (int, error) {
 	dc := calculator.New(series.NewFetcher(a.config))
 	c := investment_environment_score.NewCalculator(dc)
 	return c.Calculate(ctx)
@@ -42,7 +42,7 @@ func (a *App) CalculateInvestmentScore(ctx context.Context) (int, error) {
 
 func (a *App) Run() error {
 	ctx := context.Background()
-	score, err := a.CalculateInvestmentScore(ctx)
+	score, err := a.CalculateInvestmentEnvironmentScore(ctx)
 	if err != nil {
 		slog.ErrorContext(
 			ctx,
