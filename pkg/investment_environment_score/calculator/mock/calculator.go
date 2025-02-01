@@ -12,9 +12,9 @@ package mock
 import (
 	context "context"
 	reflect "reflect"
-	response "github.com/supermarine1377/yebis/pkg/fred/series/response"
 	time "time"
 
+	response "github.com/supermarine1377/yebis/pkg/fred/series/response"
 	gomock "go.uber.org/mock/gomock"
 )
 

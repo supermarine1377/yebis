@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"github.com/supermarine1377/yebis/pkg/fred/series/response"
-	"github.com/supermarine1377/yebis/pkg/investment_score/calculator"
-	"github.com/supermarine1377/yebis/pkg/investment_score/calculator/mock"
+	"github.com/supermarine1377/yebis/pkg/investment_environment_score/calculator"
+	"github.com/supermarine1377/yebis/pkg/investment_environment_score/calculator/mock"
 
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
