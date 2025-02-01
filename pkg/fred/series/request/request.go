@@ -7,8 +7,6 @@ import (
 	"net/url"
 
 	"github.com/supermarine1377/yebis/pkg/fred/common"
-
-	"golang.org/x/exp/slog"
 )
 
 const baseURL = "https://api.stlouisfed.org/fred/series/observations"
@@ -47,11 +45,6 @@ func NewRequest(ctx context.Context, o *Option, conf common.Config) (*Request, e
 	common.SetConfig(&v, conf)
 
 	apiURL.RawQuery = v.Encode()
-
-	slog.Info(
-		"HTTP request to FEDFUNDS",
-		slog.String("URL", apiURL.String()),
-	)
 
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, apiURL.String(), nil)
 	if err != nil {

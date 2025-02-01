@@ -38,7 +38,6 @@ func (f *Fetcher) Fetch(ctx context.Context, seriesID string, obeservationEnd ti
 		err error
 	)
 	for {
-		fmt.Println(obeservationEnd)
 		res, err = get(ctx, seriesID, obeservationEnd, f.config)
 		if err != nil {
 			return nil, err

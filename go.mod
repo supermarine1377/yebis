@@ -1,8 +1,6 @@
 module github.com/supermarine1377/yebis
 
-go 1.23
-
-toolchain go1.23.5
+go 1.19
 
 require (
 	github.com/caarlos0/env/v10 v10.0.0
