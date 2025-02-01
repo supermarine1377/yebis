@@ -5,11 +5,12 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
-	"supermarine1377/yebis/pkg/config"
-	"supermarine1377/yebis/pkg/fred/series"
-	"supermarine1377/yebis/pkg/investment_score"
-	"supermarine1377/yebis/pkg/investment_score/calculator"
-	"supermarine1377/yebis/pkg/investment_score/record"
+
+	"github.com/supermarine1377/yebis/pkg/config"
+	"github.com/supermarine1377/yebis/pkg/fred/series"
+	"github.com/supermarine1377/yebis/pkg/investment_score"
+	"github.com/supermarine1377/yebis/pkg/investment_score/calculator"
+	"github.com/supermarine1377/yebis/pkg/investment_score/record"
 )
 
 func init() {

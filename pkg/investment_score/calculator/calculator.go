@@ -5,9 +5,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"supermarine1377/yebis/pkg/fred/series/response"
-	"supermarine1377/yebis/pkg/fred/series/series_id"
 	"time"
+
+	"github.com/supermarine1377/yebis/pkg/fred/series/response"
+	"github.com/supermarine1377/yebis/pkg/fred/series/series_id"
 )
 
 type Calculator struct {

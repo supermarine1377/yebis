@@ -2,10 +2,11 @@ package calculator_test
 
 import (
 	"context"
-	"supermarine1377/yebis/pkg/fred/series/response"
-	"supermarine1377/yebis/pkg/investment_score/calculator"
-	"supermarine1377/yebis/pkg/investment_score/calculator/mock"
 	"testing"
+
+	"github.com/supermarine1377/yebis/pkg/fred/series/response"
+	"github.com/supermarine1377/yebis/pkg/investment_score/calculator"
+	"github.com/supermarine1377/yebis/pkg/investment_score/calculator/mock"
 
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
