@@ -23,35 +23,37 @@ func New(sf SeriesFetcher) *Calculator {
 }
 
 // FEDFUNDS calculates the score of FEDFUNDS.
-// If the difference between today's FEDFUNDS and that of a year ago is greater than 0.25, the score is decreased by 2.
-// Otherwise, the score is increased by 2.
-func (c *Calculator) FEDFUNDS(ctx context.Context, score int) (int, error) {
+// If the difference between today's FEDFUNDS and that of a year ago is greater than 0.25, the score is -2.
+// Otherwise, the score is 2.
+func (c *Calculator) FEDFUNDS(ctx context.Context) (int, error) {
 	diff, err := c.diff(ctx, series_id.FEDFUNDS)
 	if err != nil {
 		return 0, err
 	}
+	var score int
 	if diff > 0.25 {
-		score = score - 2
+		score = -2
 	} else {
-		score = score + 2
+		score = 2
 	}
 	return score, nil
 }
 
-func (c *Calculator) US10Y(ctx context.Context, score int) (int, error) {
+func (c *Calculator) US10Y(ctx context.Context) (int, error) {
 	diff, err := c.diff(ctx, series_id.US10Y)
 	if err != nil {
 		return 0, err
 	}
+	var score int
 	if diff < 0 {
-		score = score - 2
+		score = -2
 	} else {
-		score = score + 2
+		score = 2
 	}
 	return score, nil
 }
 
-func (c *Calculator) T10YFF(ctx context.Context, score int) (int, error) {
+func (c *Calculator) T10YFF(ctx context.Context) (int, error) {
 	res, err := c.sf.Fetch(
 		ctx,
 		series_id.T10YFF,
@@ -64,36 +66,39 @@ func (c *Calculator) T10YFF(ctx context.Context, score int) (int, error) {
 	if err != nil {
 		return 0, err
 	}
+	var score int
 	if val >= 1 {
-		score = score + 2
+		score = 2
 	} else if val < 0 {
-		score = score - 2
+		score = -2
 	}
 	return score, nil
 }
 
-func (c *Calculator) BAA10Y(ctx context.Context, score int) (int, error) {
+func (c *Calculator) BAA10Y(ctx context.Context) (int, error) {
 	diff, err := c.diff(ctx, series_id.BAA10Y)
 	if err != nil {
 		return 0, err
 	}
+	var score int
 	if diff > 0 {
-		score = score - 2
+		score = -2
 	} else {
-		score = score + 2
+		score = +2
 	}
 	return score, nil
 }
 
-func (c *Calculator) USDINDEX(ctx context.Context, score int) (int, error) {
+func (c *Calculator) USDINDEX(ctx context.Context) (int, error) {
 	diff, err := c.diff(ctx, series_id.USDINDEX)
 	if err != nil {
 		return 0, err
 	}
+	var score int
 	if diff > 0 {
-		score = score - 2
+		score = -2
 	} else {
-		score = score + 2
+		score = +2
 	}
 
 	return score, nil

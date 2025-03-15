@@ -13,11 +13,11 @@ type Calculator struct {
 }
 
 type InvestmentEnvironmentCalculator interface {
-	FEDFUNDS(ctx context.Context, score int) (int, error)
-	US10Y(ctx context.Context, score int) (int, error)
-	T10YFF(ctx context.Context, score int) (int, error)
-	BAA10Y(ctx context.Context, score int) (int, error)
-	USDINDEX(ctx context.Context, score int) (int, error)
+	FEDFUNDS(ctx context.Context) (int, error)
+	US10Y(ctx context.Context) (int, error)
+	T10YFF(ctx context.Context) (int, error)
+	BAA10Y(ctx context.Context) (int, error)
+	USDINDEX(ctx context.Context) (int, error)
 }
 
 func NewCalculator(iec InvestmentEnvironmentCalculator) *Calculator {
@@ -29,30 +29,40 @@ func NewCalculator(iec InvestmentEnvironmentCalculator) *Calculator {
 func (c *Calculator) Calculate(ctx context.Context) (int, error) {
 	var score int
 
-	score, err := c.iec.FEDFUNDS(ctx, score)
+	fredfunds, err := c.iec.FEDFUNDS(ctx)
 	if err != nil {
 		return 0, fmt.Errorf("failed to calculate a part of FEDFUNDS: %w", err)
 	}
+	fmt.Printf("fredfunds: %d\n", fredfunds)
+	score += fredfunds
 
-	score, err = c.iec.T10YFF(ctx, score)
+	t10yff, err := c.iec.T10YFF(ctx)
 	if err != nil {
 		return 0, fmt.Errorf("failed to calculate a part of T10YFF: %w", err)
 	}
+	fmt.Println("t10yff: ", t10yff)
+	score += t10yff
 
-	score, err = c.iec.US10Y(ctx, score)
+	us10y, err := c.iec.US10Y(ctx)
 	if err != nil {
 		return 0, fmt.Errorf("failed to calculate a part of US10Y: %w", err)
 	}
+	fmt.Println("us10y: ", us10y)
+	score += us10y
 
-	score, err = c.iec.BAA10Y(ctx, score)
+	baa10y, err := c.iec.BAA10Y(ctx)
 	if err != nil {
 		return 0, fmt.Errorf("failed to calculate a part of BAA10Y: %w", err)
 	}
+	fmt.Println("baa10y: ", baa10y)
+	score += baa10y
 
-	score, err = c.iec.USDINDEX(ctx, score)
+	usdindex, err := c.iec.USDINDEX(ctx)
 	if err != nil {
 		return 0, fmt.Errorf("failed to calculate a part of USDINDEX: %w", err)
 	}
+	fmt.Println("usdindex: ", usdindex)
+	score += usdindex
 
 	return score, nil
 }
