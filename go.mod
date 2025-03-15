@@ -5,7 +5,6 @@ go 1.19
 require (
 	github.com/caarlos0/env/v10 v10.0.0
 	go.uber.org/mock v0.4.0
-	golang.org/x/exp v0.0.0-20231226003508-02704c960a9b
 )
 
 require github.com/stretchr/testify v1.10.0

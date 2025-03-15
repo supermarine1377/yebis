@@ -61,11 +61,11 @@ func get(ctx context.Context, seriesID string, obeservationEnd time.Time, config
 		config,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("failed to request.NewRequest: %w", err)
+		return nil, err
 	}
 	httpRes, err := http.DefaultClient.Do(req.HTTPRequest())
 	if err != nil {
-		return nil, fmt.Errorf("failed to http.Client.Do: %w", err)
+		return nil, err
 	}
 
 	defer httpRes.Body.Close()
@@ -73,21 +73,21 @@ func get(ctx context.Context, seriesID string, obeservationEnd time.Time, config
 	switch httpRes.StatusCode {
 	case http.StatusBadRequest:
 		er, err := common_error.ParseErrorRes(httpRes)
-		if err != nil {
-			return nil, fmt.Errorf("%w: failed to error.ParseErrorRes: %w", ErrFREDAPIBadRequest, err)
+		if err == nil {
+			return nil, fmt.Errorf("%w: message:%s, error_code: %d", ErrFREDAPIBadRequest, er.ErrorMessage, er.ErrorCode)
 		}
-		return nil, fmt.Errorf("%w: %+v", ErrFREDAPIBadRequest, *er)
+		return nil, ErrFREDAPIBadRequest
 	case http.StatusInternalServerError:
 		return nil, ErrFREDAPIInternalServer
 	}
 
 	b, err := io.ReadAll(httpRes.Body)
 	if err != nil {
-		return nil, fmt.Errorf("failed to io.ReadAll: %w", err)
+		return nil, err
 	}
 	var Res response.Res
 	if err := json.Unmarshal(b, &Res); err != nil {
-		return nil, fmt.Errorf("fail to json.Unmarshal: %w", err)
+		return nil, err
 	}
 
 	return &Res, nil

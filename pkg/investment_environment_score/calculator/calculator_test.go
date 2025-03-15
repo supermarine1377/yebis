@@ -70,7 +70,7 @@ func TestCalculator_FEDFUNDS(t *testing.T) {
 			c := calculator.New(m)
 			tt.prepareMockSeriesFetcher(t, m)
 
-			got, err := c.FEDFUNDS(tt.args.ctx, tt.args.score)
+			got, err := c.FEDFUNDS(tt.args.ctx)
 			if tt.wantErr {
 				assert.Error(t, err)
 				return
