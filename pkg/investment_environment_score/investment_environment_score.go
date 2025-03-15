@@ -29,40 +29,25 @@ func NewCalculator(iec InvestmentEnvironmentCalculator) *Calculator {
 func (c *Calculator) Calculate(ctx context.Context) (int, error) {
 	var score int
 
-	fredfunds, err := c.iec.FEDFUNDS(ctx)
-	if err != nil {
-		return 0, fmt.Errorf("failed to calculate a part of FEDFUNDS: %w", err)
+	parts := []struct {
+		name string
+		fn   func(ctx context.Context) (int, error)
+	}{
+		{"FEDFUNDS", c.iec.FEDFUNDS},
+		{"T10YFF", c.iec.T10YFF},
+		{"US10Y", c.iec.US10Y},
+		{"BAA10Y", c.iec.BAA10Y},
+		{"USDINDEX", c.iec.USDINDEX},
 	}
-	fmt.Printf("fredfunds: %d\n", fredfunds)
-	fmt.Println("fredfunds: ", fredfunds)
 
-	t10yff, err := c.iec.T10YFF(ctx)
-	if err != nil {
-		return 0, fmt.Errorf("failed to calculate a part of T10YFF: %w", err)
+	for _, part := range parts {
+		value, err := part.fn(ctx)
+		if err != nil {
+			return 0, fmt.Errorf("failed to calculate a part of %s: %w", part.name, err)
+		}
+		fmt.Printf("%s: %d\n", part.name, value)
+		score += value
 	}
-	fmt.Printf("t10yff: %d\n", t10yff)
-	score += t10yff
-
-	us10y, err := c.iec.US10Y(ctx)
-	if err != nil {
-		return 0, fmt.Errorf("failed to calculate a part of US10Y: %w", err)
-	}
-	fmt.Printf("us10y: %d\n", us10y)
-	score += us10y
-
-	baa10y, err := c.iec.BAA10Y(ctx)
-	if err != nil {
-		return 0, fmt.Errorf("failed to calculate a part of BAA10Y: %w", err)
-	}
-	fmt.Printf("baa10y: %d\n", baa10y)
-	score += baa10y
-
-	usdindex, err := c.iec.USDINDEX(ctx)
-	if err != nil {
-		return 0, fmt.Errorf("failed to calculate a part of USDINDEX: %w", err)
-	}
-	fmt.Printf("usdindex: %d\n", usdindex)
-	score += usdindex
 
 	return score, nil
 }
