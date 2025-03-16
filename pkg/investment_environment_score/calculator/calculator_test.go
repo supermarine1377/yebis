@@ -247,3 +247,50 @@ func TestCalculator_BAA10Y(t *testing.T) {
 		})
 	}
 }
+
+func TestCalculator_USDINDEX(t *testing.T) {
+	tests := []struct {
+		name                     string
+		prepareMockSeriesFetcher func(t *testing.T, m *mock.MockSeriesFetcher)
+		want                     int
+		wantErr                  bool
+	}{
+		{
+			name: "If USDINDEX is 1 and a year ago's USDINDEX is -1, then the score should be 2",
+			prepareMockSeriesFetcher: func(t *testing.T, m *mock.MockSeriesFetcher) {
+				configureMockSeriesFetcherWithPastAndPresent(t, m, series_id.USDINDEX, "-1", "1")
+			},
+			want: -2,
+		},
+		{
+			name: "If USDINDEX is -1 and a year ago's USDINDEX is 1, then the score should be 2",
+			prepareMockSeriesFetcher: func(t *testing.T, m *mock.MockSeriesFetcher) {
+				configureMockSeriesFetcherWithPastAndPresent(t, m, series_id.USDINDEX, "1", "-1")
+			},
+			want: 2,
+		},
+		{
+			name: "異常系",
+			prepareMockSeriesFetcher: func(t *testing.T, m *mock.MockSeriesFetcher) {
+				m.EXPECT().Fetch(gomock.Any(), series_id.USDINDEX, gomock.Any()).Return(nil, assert.AnError)
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			m := mock.NewMockSeriesFetcher(ctrl)
+			tt.prepareMockSeriesFetcher(t, m)
+			c := calculator.New(m)
+
+			got, err := c.USDINDEX(context.Background())
+			if tt.wantErr {
+				assert.Error(t, err)
+				return
+			}
+			assert.NoError(t, err)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
