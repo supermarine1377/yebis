@@ -48,6 +48,13 @@ func TestCalculator_FEDFUNDS(t *testing.T) {
 			},
 			want: 2,
 		},
+		{
+			name: "異常系",
+			prepareMockSeriesFetcher: func(t *testing.T, m *mock.MockSeriesFetcher) {
+				m.EXPECT().Fetch(gomock.Any(), series_id.FEDFUNDS, gomock.Any()).Return(nil, assert.AnError)
+			},
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
