@@ -4,37 +4,30 @@ import (
 	"context"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/supermarine1377/yebis/pkg/fred/series/response"
 	"github.com/supermarine1377/yebis/pkg/investment_environment_score/calculator"
 	"github.com/supermarine1377/yebis/pkg/investment_environment_score/calculator/mock"
-
-	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
 )
 
-func prepareMockSeriesFetcher(t *testing.T, m *mock.MockSeriesFetcher, ayearago, today string) {
-	t.Helper()
+func TestCalculator_FEDFUNDS(t *testing.T) {
+	prepareMockSeriesFetcher := func(t *testing.T, m *mock.MockSeriesFetcher, ayearago, today string) {
+		t.Helper()
 
-	m.EXPECT().Fetch(gomock.Any(), "FEDFUNDS", gomock.Any()).Return(&response.Res{
-		Observations: []response.Observation{
-			{Value: ayearago},
-		},
-	}, nil).After(
 		m.EXPECT().Fetch(gomock.Any(), "FEDFUNDS", gomock.Any()).Return(&response.Res{
 			Observations: []response.Observation{
-				{Value: today},
+				{Value: ayearago},
 			},
-		}, nil),
-	)
-}
-func TestCalculator_FEDFUNDS(t *testing.T) {
-
-	type args struct {
-		ctx   context.Context
-		score int
+		}, nil).After(
+			m.EXPECT().Fetch(gomock.Any(), "FEDFUNDS", gomock.Any()).Return(&response.Res{
+				Observations: []response.Observation{
+					{Value: today},
+				},
+			}, nil),
+		)
 	}
 	tests := []struct {
-		args                     args
 		name                     string
 		prepareMockSeriesFetcher func(t *testing.T, m *mock.MockSeriesFetcher)
 		want                     int
@@ -42,10 +35,6 @@ func TestCalculator_FEDFUNDS(t *testing.T) {
 	}{
 		{
 			name: "If today's FEDFUNDS is 0.5 and a year ago's FEDFUNDS is 0, then the score should be -2",
-			args: args{
-				ctx:   context.Background(),
-				score: 0,
-			},
 			prepareMockSeriesFetcher: func(t *testing.T, m *mock.MockSeriesFetcher) {
 				prepareMockSeriesFetcher(t, m, "0", "0.5")
 			},
@@ -53,10 +42,6 @@ func TestCalculator_FEDFUNDS(t *testing.T) {
 		},
 		{
 			name: "If today's FEDFUNDS is 0 and a year ago's FEDFUNDS is 0.25, then the score should be 2",
-			args: args{
-				ctx:   context.Background(),
-				score: 0,
-			},
 			prepareMockSeriesFetcher: func(t *testing.T, m *mock.MockSeriesFetcher) {
 				prepareMockSeriesFetcher(t, m, "0.25", "0")
 			},
@@ -70,7 +55,7 @@ func TestCalculator_FEDFUNDS(t *testing.T) {
 			c := calculator.New(m)
 			tt.prepareMockSeriesFetcher(t, m)
 
-			got, err := c.FEDFUNDS(tt.args.ctx)
+			got, err := c.FEDFUNDS(context.Background())
 			if tt.wantErr {
 				assert.Error(t, err)
 				return
