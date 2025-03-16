@@ -200,3 +200,50 @@ func TestCalculator_T10YFF(t *testing.T) {
 		})
 	}
 }
+
+func TestCalculator_BAA10Y(t *testing.T) {
+	tests := []struct {
+		name                     string
+		prepareMockSeriesFetcher func(t *testing.T, m *mock.MockSeriesFetcher)
+		want                     int
+		wantErr                  bool
+	}{
+		{
+			name: "If BAA10Y is 1 and a year ago's BAA10Y is -1, then the score should be -2",
+			prepareMockSeriesFetcher: func(t *testing.T, m *mock.MockSeriesFetcher) {
+				configureMockSeriesFetcherWithPastAndPresent(t, m, series_id.BAA10Y, "-1", "1")
+			},
+			want: -2,
+		},
+		{
+			name: "If BAA10Y is -1 and a year ago's BAA10Y is 1, then the score should be 2",
+			prepareMockSeriesFetcher: func(t *testing.T, m *mock.MockSeriesFetcher) {
+				configureMockSeriesFetcherWithPastAndPresent(t, m, series_id.BAA10Y, "1", "-1")
+			},
+			want: 2,
+		},
+		{
+			name: "異常系",
+			prepareMockSeriesFetcher: func(t *testing.T, m *mock.MockSeriesFetcher) {
+				m.EXPECT().Fetch(gomock.Any(), series_id.BAA10Y, gomock.Any()).Return(nil, assert.AnError)
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			m := mock.NewMockSeriesFetcher(ctrl)
+			tt.prepareMockSeriesFetcher(t, m)
+			c := calculator.New(m)
+
+			got, err := c.BAA10Y(context.Background())
+			if tt.wantErr {
+				assert.Error(t, err)
+				return
+			}
+			assert.NoError(t, err)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
