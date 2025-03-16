@@ -2,6 +2,8 @@ package calculator_test
 
 import (
 	"context"
+	"math"
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -129,6 +131,80 @@ func TestCalculator_US10Y(t *testing.T) {
 			tt.prepareMockSeriesFetcher(t, m)
 
 			got, err := c.US10Y(context.Background())
+			if tt.wantErr {
+				assert.Error(t, err)
+				return
+			}
+			assert.NoError(t, err)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func TestCalculator_T10YFF(t *testing.T) {
+	prepateMockSeriesFetcher := func(t *testing.T, m *mock.MockSeriesFetcher, value string) {
+		t.Helper()
+		m.EXPECT().Fetch(gomock.Any(), series_id.T10YFF, gomock.Any()).Return(&response.Res{
+			Observations: []response.Observation{
+				{Value: value},
+			},
+		}, nil)
+	}
+
+	tests := []struct {
+		name                     string
+		prepareMockSeriesFetcher func(t *testing.T, m *mock.MockSeriesFetcher)
+		want                     int
+		wantErr                  bool
+	}{
+		{
+			name: "If T10YFF is 1, then the score should be 2",
+			prepareMockSeriesFetcher: func(t *testing.T, m *mock.MockSeriesFetcher) {
+				prepateMockSeriesFetcher(t, m, "1")
+			},
+			want:    2,
+			wantErr: false,
+		},
+		{
+			name: "If T10YFF is -1, then the score should be -2",
+			prepareMockSeriesFetcher: func(t *testing.T, m *mock.MockSeriesFetcher) {
+				prepateMockSeriesFetcher(t, m, "-1")
+			},
+			want:    -2,
+			wantErr: false,
+		},
+		{
+			name: "If T10YFF is 0.5, then the score should be 0",
+			prepareMockSeriesFetcher: func(t *testing.T, m *mock.MockSeriesFetcher) {
+				prepateMockSeriesFetcher(t, m, "0.5")
+			},
+			want:    0,
+			wantErr: false,
+		},
+		{
+			name: "異常系",
+			prepareMockSeriesFetcher: func(t *testing.T, m *mock.MockSeriesFetcher) {
+				m.EXPECT().Fetch(gomock.Any(), series_id.T10YFF, gomock.Any()).Return(nil, assert.AnError)
+			},
+			wantErr: true,
+		},
+		{
+			name: "異常系 - float64の最大値",
+			prepareMockSeriesFetcher: func(t *testing.T, m *mock.MockSeriesFetcher) {
+				val := strconv.FormatFloat(math.MaxFloat64, 'f', -1, 64)
+				prepateMockSeriesFetcher(t, m, val)
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			m := mock.NewMockSeriesFetcher(ctrl)
+			tt.prepareMockSeriesFetcher(t, m)
+			c := calculator.New(m)
+
+			got, err := c.T10YFF(context.Background())
 			if tt.wantErr {
 				assert.Error(t, err)
 				return
