@@ -23,11 +23,19 @@ var ErrFREDAPIInternalServer = errors.New("FRED API returned Internal Server Err
 var ErrFREDAPIBadRequest = errors.New("FRED API returned Bad Request Error")
 
 type Fetcher struct {
-	config common.Config
+	config    common.Config
+	transport http.RoundTripper
 }
 
 func NewFetcher(config common.Config) *Fetcher {
-	return &Fetcher{config: config}
+	return &Fetcher{
+		config:    config,
+		transport: http.DefaultTransport,
+	}
+}
+
+func (f *Fetcher) SetTransport(transport http.RoundTripper) {
+	f.transport = transport
 }
 
 // Fetch economic data via FRED API.
@@ -38,7 +46,7 @@ func (f *Fetcher) Fetch(ctx context.Context, seriesID string, obeservationEnd ti
 		err error
 	)
 	for {
-		res, err = get(ctx, seriesID, obeservationEnd, f.config)
+		res, err = f.get(ctx, seriesID, obeservationEnd)
 		if err != nil {
 			return nil, err
 		}
@@ -51,19 +59,19 @@ func (f *Fetcher) Fetch(ctx context.Context, seriesID string, obeservationEnd ti
 	return res, err
 }
 
-func get(ctx context.Context, seriesID string, obeservationEnd time.Time, config common.Config) (*response.Res, error) {
+func (f *Fetcher) get(ctx context.Context, seriesID string, obeservationEnd time.Time) (*response.Res, error) {
 	req, err := request.NewRequest(
 		ctx,
 		&request.Option{
 			SeriesID:       seriesID,
 			ObservationEnd: Date(obeservationEnd),
 		},
-		config,
+		f.config,
 	)
 	if err != nil {
 		return nil, err
 	}
-	httpRes, err := http.DefaultClient.Do(req.HTTPRequest())
+	httpRes, err := f.transport.RoundTrip(req.HTTPRequest())
 	if err != nil {
 		return nil, err
 	}
